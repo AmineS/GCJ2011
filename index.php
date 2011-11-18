@@ -5,6 +5,8 @@
         <title></title>
     </head>
     <body>
+        
+        /* Woah hoah */
         <?php
             $r = new HttpRequest('http://bioniklabs.com/index-5.html', HttpRequest::METH_POST);
             //$r->setOptions(array('cookies' => array('lang' => 'de')));
