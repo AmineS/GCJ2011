@@ -71,13 +71,21 @@ class Order {
         }
         else echo mysql_error();//return 0;
     }
+    public function toString(){
+        if($this->twilio==true) $twilioTemp="true";
+        else $twilioTemp="false";
+        return $this->from."  ".$this->bs."  ".$this->shares."  ".$this->price."  ".$twilioTemp."  ".$this->state;
+    }
 
 }
-$order = new Order('from1', 'bs1', 100, 'stock1', 10, false, 'U');
+/*$order = new Order('from1', 'bs1', 100, 'stock1', 10, false, 'U');
 $order->setId(12);
 $order->setParent(13);
 var_dump($order);
 $order->insertIntoPending();
 unset($order);
-var_dump($order);
+var_dump($order);*/
+/*$what = fopen("./test2.txt", 'w');
+fwrite($what,"fuck me");
+fclose();*/
 ?>
