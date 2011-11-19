@@ -16,6 +16,8 @@ class OrderBook
     private $pendingOrders;
     private $activeOrders;
     private $archiveOrders;
+    private $activeIndex;
+    private $activeId;
     
     public function __construct()
     {
@@ -39,6 +41,28 @@ class OrderBook
         $this->activeOrders = mysql_query($query);
     }
 
+    public function getActiveOrders(){
+        $orders=array();
+        $query = "Select * from order_book_active";
+        $result = mysql_query($query);
+        $i=0;
+        while ($row = mysql_fetch_array($result))
+        {
+            $order = new Order($row[1], $row[2],$row[3], $row[4], $row[5], $row[6],$row[9]);
+            $order->setId($row[0]);
+            $order->setTimestamp($row[9]);
+            $order->setParent($row[8]);
+            $order->setHasChild($row[10]);
+            if($order->getId()==$this->activeId)
+            {
+                $this->activeIndex = $i;
+            }
+            $orders[$i]=$order;
+            $i++;
+        }
+        return $orders;
+    }
+
     /*load all archived orders */
     public function loadArchive()
     {
@@ -50,7 +74,7 @@ class OrderBook
      * resetPending is a boolean that specifies whether or not 
      * to reload the pending orders table
      */
-    public function moveToActive($resetPending)
+    public function moveToActive($resetPending, $shift)
     {
         if ($resetPending || !isset($this->pendingOrders))
         {
@@ -59,17 +83,25 @@ class OrderBook
 
         $result = $this->pendingOrders;
         //$labels = mysql_fetch_array($result);       
-
+        $i = 0;
         while ($row = mysql_fetch_array($result))
         {
             $order = new Order($row[1], $row[2],$row[3], $row[4], $row[5], $row[6],$row[9]);
-            $order->setId($row[0]);
+            $order->setId($row[0]*$shift);
             $order->setTimestamp($row[9]);
             $order->setParent($row[8]);
             $order->setHasChild($row[10]);
-            
+            if ($i ==0)
+            {
+                $this->activeId = $order->getId();
+            }
             $order->insertActive();
+            if ($shift > 0)
+            {
+                $order->setId($order->getId()/10);
+            }
             $order->removeFromPending();
+            $i++;
         }                
     }
     
@@ -122,6 +154,23 @@ class OrderBook
     public function getArchiveOrders()
     {
         return $this->archiveOrders;
-    }   
+    }
+
+    public function setActiveIndex($activeIndex){
+        $this->activeId=$id;
+    }
+    public function getActiveIndex(){
+        return $this->activeIndex;
+    }
+
+    public function setActiveId($activeId){
+        $this->activeId=$activeId;
+    }
+    public function getActiveId(){
+        return $this->activeId;
+    }
 }
+echo "bla";
+$orderBook = new OrderBook();
+$orderBook->moveToActive(true, 10);
 ?>
