@@ -11,18 +11,21 @@
  * @author Omega
  */
 class Order {
-    public $id;
-    public $from;
-    public $bs;
-    public $shares;
-    public $stock;
-    public $price;
-    public $twilio;
-    public $timestamp;
-    public $parent;
-    public $state;
-    public $has_child;
+    private $id;
+    private $from;
+    private $bs;
+    private $shares;
+    private $stock;
+    private $price;
+    private $twilio;
+    private $timestamp;
+    private $parent;
+    private $state;
+    private $has_child;
 
+    /*
+     * Constructor for order object
+     */
     public function __construct($from, $bs, $shares, $stock, $price, $twilio, $state){
         $this->from = $from;
         $this->bs = $bs;
@@ -33,10 +36,16 @@ class Order {
         $this->state = $state;
     }
 
+    /*
+     * destructor
+     */
     public function  __destruct() {
         ;
     }
 
+    /*
+     * getters and setters for all the variables and the id
+     */
     public function setId($id){
         $this->id = $id;
     }
@@ -53,6 +62,14 @@ class Order {
         return $this->parent;
     }
 
+    public function setTimestamp($timestamp){
+        $this->timestamp = $timestamp;
+    }
+
+    public function getTimestamp(){
+        return $this->timestamp;
+    }    
+    
     public function setHasChild($has_child){
         $this->has_child = $has_child;
     }
@@ -61,10 +78,13 @@ class Order {
         return $this->has_child;
     }
 
-    //isValid() checks that the fields meet the requirements
+    /**
+     *loads an order into the pending table of the database
+     * @return type 
+     */
     public function insertPending(){
         $q="INSERT INTO order_book_pending (`from`, `bs`, `shares`, `stock`, `price`, `twilio`, `timestamp`,`state`)
-	VALUES ('$this->from', '$this->bs', '$this->shares', '$this->stock', '$this->price', '$this->twilio', CURRENT_TIMESTAMP, 'U');";
+	VALUES ('$this->from', '$this->bs', '$this->shares', '$this->stock', '$this->price', '$this->twilio', NOW(), 'U');";
 
         
         $query = mysql_query($q);
@@ -72,6 +92,26 @@ class Order {
             return 1;
         }
         else echo mysql_error();//return 0;
+    }
+
+    public function insertActive(){
+        $q="INSERT INTO order_book_active (`id`,`from`, `bs`, `shares`, `stock`, `price`, `twilio`, `timestamp`,`state`)
+	VALUES ('$this->id', '$this->from', '$this->bs', '$this->shares', '$this->stock', '$this->price', '$this->twilio', NOW(), 'U');";
+//
+//        $fh = fopen("wtf.txt", "a");
+//        fwrite($fh, $q);
+//        fclose($fh);
+        $query = mysql_query($q);
+        if($query){
+            return 1;
+        }
+        else echo mysql_error();//return 0;
+    }
+    
+    public function removeFromPending()
+    {
+        $q = "DELETE FROM order_book_pending WHERE id=$this->id";
+        $query = mysql_query($q);
     }
     public function toString(){
         if($this->twilio==true) $twilioTemp="true";
@@ -83,16 +123,5 @@ class Order {
     {
         return true;
     }
-
 }
-/*$order = new Order('from1', 'bs1', 100, 'stock1', 10, false, 'U');
-$order->setId(12);
-$order->setParent(13);
-var_dump($order);
-$order->insertIntoPending();
-unset($order);
-var_dump($order);*/
-/*$what = fopen("./test2.txt", 'w');
-fwrite($what,"fuck me");
-fclose();*/
 ?>
