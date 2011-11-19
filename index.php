@@ -2,23 +2,20 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="js/jquery-1.7.min.js"></script>           
         <title></title>
     </head>
-    <body>
-        
-        /* Woah hoah */
-        <?php
-            $r = new HttpRequest('http://bioniklabs.com/index-5.html', HttpRequest::METH_POST);
-            //$r->setOptions(array('cookies' => array('lang' => 'de')));
-            //recipient=sometext&required=Name&subject=Contact+Form&redirect=..%2Fthankyou.html&Name=test&Email=test%40gmail.com&Message=test&submit=Send
-            $r->addPostFields(array('Name' => 'CG11', 'Email' => 'CG11@gmail','Message'=>'blabla', 'submit'=>'send'));
-            //$r->addPostFile('image', 'profile.jpg', 'image/jpeg');
-            print_r($r->getPostFields());
-            try {
-                echo $r->send()->getBody();
-            } catch (HttpException $ex) {
-                echo $ex;
-            }
-        ?>
+    <body>        
+        <div id="menu">
+            <ul>
+                <li class="menuButton" id="reset">Reset</li>
+                <li class="menuButton" id="snapshot">Snapshot</li>
+                <li class="menuButton" id="stocks"> Stock</li>
+            </ul>
+            
+        <div id="snapshotView"> </div>
+        <div id="stocksView"></div>
+        <div id="resetStatus"></div>
+        <script type="text/javascript" src="js/gui.js"></script>
     </body>
 </html>
