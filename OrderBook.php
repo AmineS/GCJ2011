@@ -41,7 +41,7 @@ class OrderBook
         $this->activeOrders = mysql_query($query);
     }
 
-    public function getActiveOrders(){
+    public function getActiveOrdersToMatch(){
         $orders=array();
         $query = "Select * from order_book_active";
         $result = mysql_query($query);
