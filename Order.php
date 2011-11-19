@@ -34,7 +34,9 @@ class Order {
         $this->price = $price;
         $this->twilio = $twilio;
         $this->state = $state;
+        $this->parent = NULL;
     }
+
 
     /*
      * destructor
@@ -46,11 +48,39 @@ class Order {
     /*
      * getters and setters for all the variables and the id
      */
+    public function getFrom(){
+        return $this->from;
+    }
+
+    public function getShares(){
+        return $this->shares;
+    }
+
+    public function setShares($shares){
+        $this->shares=$shares;
+    }
+
+    public function getBS(){
+        return $this->bs;
+    }
+
+    public function setBS($bs){
+        $this->bs=$bs;
+    }
+
+    public function getPrice(){
+        return $this->price;
+    }
+
+    public function getStock(){
+        return $this->stock;
+    }
+
     public function setId($id){
         $this->id = $id;
     }
 
-    public function getId($id){
+    public function getId(){
         return $this->id;
     }
 
@@ -117,6 +147,7 @@ class Order {
         
                 $query = mysql_query($q);
         if($query){
+            echo "went trough";
             return 1;
         }
         else echo mysql_error();//return 0;
