@@ -1,5 +1,5 @@
 <?php
-include_once('dbConnect.php');
+//include_once('dbConnect.php');
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -62,9 +62,11 @@ class Order {
     }
 
     //isValid() checks that the fields meet the requirements
-    public function insertIntoPending(){
+    public function insertPending(){
         $q="INSERT INTO order_book_pending (`from`, `bs`, `shares`, `stock`, `price`, `twilio`, `timestamp`,`state`)
-	VALUES ('$this->from', '$this->bs', '$this->shares', '$this->stock', '$this->price', '$this->twilio', CURRENT_TIMESTAMP, 'U')";
+	VALUES ('$this->from', '$this->bs', '$this->shares', '$this->stock', '$this->price', '$this->twilio', CURRENT_TIMESTAMP, 'U');";
+
+        
         $query = mysql_query($q);
         if($query){
             return 1;
@@ -75,6 +77,11 @@ class Order {
         if($this->twilio==true) $twilioTemp="true";
         else $twilioTemp="false";
         return $this->from."  ".$this->bs."  ".$this->shares."  ".$this->price."  ".$twilioTemp."  ".$this->state;
+    }
+    
+    public function isValid()
+    {
+        return true;
     }
 
 }

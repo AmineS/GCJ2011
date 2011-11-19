@@ -30,25 +30,28 @@ $twilio= $_POST["Twilio"];
 $state = 'U';
 
 if($twilio=='N'){
-    $twilio=false;
+    $twilio=0;
 }
 else{
-    $twilio=true;
+    $twilio=1;
 }
 /*
  * Create a new order
  */
 
-/*$order =new Order($from, $bs, $shares, $stock, $price, $twilio, $state);
+$order =new Order($from, $bs, $shares, $stock, $price, $twilio, $state);
 $order->isValid();
-$order->insertToPending();
-$s=$order->toString();*/
+$order->insertPending();
 
-$q1="INSERT INTO order_book_pending (`from`, `bs`, `shares`, `stock`, `price`, `twilio`, `timestamp`,`state`)
-	VALUES ('$from', '$bs', '$shares', '$stock', '$price', '$twilio', CURRENT_TIMESTAMP, 'U')";
-//$q = "INSERT into test (line) values ('$price')";
 
-$query = mysql_query($q);
+//$q="INSERT INTO order_book_pending (`from`, `bs`, `shares`, `stock`, `price`, `twilio`, `timestamp`,`state`)
+//	VALUES ('$from', '$bs', '$shares', '$stock', '$price', '$twilio', CURRENT_TIMESTAMP, 'U');";
+
+//$fh = fopen("wtf.txt","w+");
+//fwrite($fh, $q1);
+//fclose($fh);
+
+//$query = mysql_query($q);
 //include('processor.php');
 //processTransactions();
 
