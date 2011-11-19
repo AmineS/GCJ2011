@@ -95,8 +95,9 @@ class Order {
     }
 
     public function insertActive(){
-        $q="INSERT INTO order_book_active (`id`,`from`, `bs`, `shares`, `stock`, `price`, `twilio`, `timestamp`,`state`)
-	VALUES ('$this->id', '$this->from', '$this->bs', '$this->shares', '$this->stock', '$this->price', '$this->twilio', NOW(), 'U');";
+        $q="INSERT INTO order_book_active (`id`,`from`, `bs`, `shares`, `stock`, `price`, `twilio`, `timestamp`,`state`,`parent`, `has_child`)
+	VALUES ('$this->id', '$this->from', '$this->bs', '$this->shares', '$this->stock', '$this->price', '$this->twilio', 
+                '$this->timestamp', '$this->state','$this->parent', '$this->has_child');";
 //
 //        $fh = fopen("wtf.txt", "a");
 //        fwrite($fh, $q);
@@ -108,9 +109,28 @@ class Order {
         else echo mysql_error();//return 0;
     }
     
+    public function insertArchive()
+    {
+        $q="INSERT INTO order_book_archive (`id`,`from`, `bs`, `shares`, `stock`, `price`, `twilio`, `timestamp`,`state`,`parent`, `has_child`)
+            VALUES ('$this->id', '$this->from', '$this->bs', '$this->shares', '$this->stock', '$this->price', '$this->twilio', 
+                '$this->timestamp', '$this->state', '$this->parent', '$this->has_child');";
+        
+                $query = mysql_query($q);
+        if($query){
+            return 1;
+        }
+        else echo mysql_error();//return 0;
+    }
+    
     public function removeFromPending()
     {
         $q = "DELETE FROM order_book_pending WHERE id=$this->id";
+        $query = mysql_query($q);
+    }
+    
+    public function removeFromActive()
+    {
+        $q = "DELETE FROM order_book_active WHERE id=$this->id";
         $query = mysql_query($q);
     }
     public function toString(){

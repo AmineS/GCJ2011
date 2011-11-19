@@ -73,9 +73,30 @@ class OrderBook
         }                
     }
     
-    public function moveToArchive()
+    public function moveToArchive($resetActive)
     {
-        
+        if ($resetActive || !isset($this->activeOrders))
+        {
+            $this->loadActive();
+        }        
+
+        $result = $this->activeOrders;
+        //$labels = mysql_fetch_array($result);       
+
+        while ($row = mysql_fetch_array($result))
+        {
+            if($row[9]=='F')
+            {
+                $order = new Order($row[1], $row[2],$row[3], $row[4], $row[5], $row[6],$row[9]);
+                $order->setId($row[0]);
+                $order->setTimestamp($row[9]);
+                $order->setParent($row[8]);
+                $order->setHasChild($row[10]);
+
+                $order->insertArchive();
+                $order->removeFromActive();   
+            }            
+        }                  
     }
     
     public function loadAll()
@@ -101,10 +122,6 @@ class OrderBook
     public function getArchiveOrders()
     {
         return $this->archiveOrders;
-    }
+    }   
 }
-
-
-$ob = new OrderBook();
-$ob->moveToActive(true);
 ?>
