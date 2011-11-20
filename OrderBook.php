@@ -1,6 +1,6 @@
 <?php
-//include_once 'dbConnect.php';
-//include_once 'Order.php';
+include_once 'dbConnect.php';
+include_once 'Order.php';
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -50,7 +50,8 @@ class OrderBook
         {
             $order = new Order($row[1], $row[2],$row[3], $row[4], $row[5], $row[6],$row[9]);
             $order->setId($row[0]);
-            $order->setTimestamp($row[9]);
+            $date=strtotime($row[7]);
+            $order->setTimestamp($date);
             $order->setParent($row[8]);
             $order->setHasChild($row[10]);
             if($order->getId()==$this->activeId)
@@ -58,9 +59,12 @@ class OrderBook
                 $this->activeIndex = $i;
             }
             $orders[$i]=$order;
-            $i++;
+           // echo $orders[$i]->toString()."*****";
+            $i=$i+1;
+            
         }
         return $orders;
+        
     }
 
     /*load all archived orders */
@@ -88,7 +92,7 @@ class OrderBook
         {
             $order = new Order($row[1], $row[2],$row[3], $row[4], $row[5], $row[6],$row[9]);
             $order->setId($row[0]*$shift);
-            $order->setTimestamp($row[9]);
+            $order->setTimestamp($row[7]);
             $order->setParent($row[8]);
             $order->setHasChild($row[10]);
             if ($i ==0)
@@ -121,10 +125,9 @@ class OrderBook
             {
                 $order = new Order($row[1], $row[2],$row[3], $row[4], $row[5], $row[6],$row[9]);
                 $order->setId($row[0]);
-                $order->setTimestamp($row[9]);
+                $order->setTimestamp($row[7]);
                 $order->setParent($row[8]);
                 $order->setHasChild($row[10]);
-
                 $order->insertArchive();
                 $order->removeFromActive();   
             }            
@@ -157,7 +160,7 @@ class OrderBook
     }
 
     public function setActiveIndex($activeIndex){
-        $this->activeId=$id;
+        $this->activeIndex=$activeIndex;
     }
     public function getActiveIndex(){
         return $this->activeIndex;
@@ -170,7 +173,6 @@ class OrderBook
         return $this->activeId;
     }
 }
-//echo "bla";
-//$orderBook = new OrderBook();
-//$orderBook->moveToActive(true, 10);
+
+
 ?>

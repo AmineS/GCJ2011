@@ -1,0 +1,2 @@
+INSERT INTO trade_book (`timestamp`,`buy_ref`, `sell_ref`, `price`, `amount`, `stock`)
+                           values (NOW(),'150', '121', '9000', '50', 'XYZ');

@@ -2,8 +2,6 @@
 
  include_once('dbConnect.php');
  include_once ('Order.php');
- include_once('OrderBook.php');
- include_once('post.php');
 
 /* 
  * if message is not identified as an error, kill the 
@@ -12,27 +10,13 @@
  
 
 /*
- * need to generate an XML respons
+ * need to generate an XML response
+ * if the answer is not of the right message type
  */
 $msgType = $_POST["MessageType"];
 if(strcmp($msgType, "O")!=0 )
 {
-    $response = Order::generateRejectResponse("M");
-    $r = new HttpRequest('http://localhost:40000/broker/endpoint', HttpRequest::METH_POST);
-    $r->addPostFields(array('xml' => $response));
-    $r->setContentType("Content-Type: text/xml");
-
-    try {
-         echo "<br/>";
-        echo $r->send()->getBody();
-           
-    } catch (HttpException $ex) {
-
-        echo $ex;
-    }
-    die($response);
-
-    
+    die('Message did not identify as an order!');
 }
 
 /*
@@ -45,9 +29,6 @@ $stock = $_POST["Stock"];
 $price= $_POST["Price"];
 $twilio= $_POST["Twilio"];
 $state = 'U';
-$brokerAddress =$_POST["BrokerAddress"];
-$brokerPort = $_POST["BrokerPort"];
-$brokerEndPoint =$_POST["BrokerEndpoint"];
 
 if($twilio=='N'){
     $twilio=0;
@@ -61,15 +42,7 @@ else{
 
 $order =new Order($from, $bs, $shares, $stock, $price, $twilio, $state);
 $order->isValid();
-$insertion = $order->insertPending();
-if($insertion == 1)
-{
-    postToBroker($brokerAddress, $brokerPort, $brokerEndPoint, $order->generateAcceptResponse());
-}
-else
-{
+$order->insertPending();
 
-    Order::generateRejectResponse('invalid dataset');
-}
-
+//mysql_close();
 ?>

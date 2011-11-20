@@ -16,12 +16,14 @@ class Trade {
    public $sell_ref;
    public $price;
    public $amount;
+   public $stock;
 
-   public function __construct($buy_ref, $sell_ref, $price, $amount){
+   public function __construct($buy_ref, $sell_ref, $price, $amount, $stock){
        $this->buy_ref = $buy_ref;
        $this->sell_ref = $sell_ref;
        $this->price = $price;
        $this->amount = $amount;
+       $this->stock =$stock;
    }
 
    public function  __destruct() {
@@ -29,8 +31,8 @@ class Trade {
     }
 
     public function insertTradeBook(){
-        $q = "INSERT INTO trade_book (`timestamp`, `buy_ref`, `sell_ref`, `price`, `amount`)
-            values (NOW(), '$this->buy_ref', '$this->sell_ref', '$this->price', '$this->amount')";
+        $q = "INSERT INTO trade_book (`timestamp`, `buy_ref`, `sell_ref`, `price`, `amount`, `stock`)
+            values (NOW(), '$this->buy_ref', '$this->sell_ref', '$this->price', '$this->amount', '$this->stock')";
                $query = mysql_query($q);
         if($query){
             return 1;
@@ -43,7 +45,7 @@ class Trade {
     }
 
 }
-$trade = new Trade(12, 13, 100, 12);
+$trade = new Trade(2, 4, 100, 12);
 $trade->insertTradeBook();
 echo $trade->toString();
 unset($trade);

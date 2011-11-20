@@ -4,17 +4,11 @@
  */
 
 
-var host = "http://localhost/GCJ2011/";
+host="http://localhost/"
 
 function exReset()
 {
-    var url = host + "reset.php";
-    
-    $.post(url, function()
-    {
-        alert('The system has been successfully reset');
-    });
-    
+    alert('reset');
 }
 
 function exSnapshot()
@@ -29,15 +23,24 @@ function exVisual()
 
 function exAttachButtonEvents()
 {
-    $("#reset").click(exReset);
+    $("#reset").click(function(){
+        exReset();
+    });
     $("#snapshot").click(exSnapshot);
     $("#visual").click(exVisual);
+    alert('hooooo');
 }
 
 function exMain()
 {
     
     exAttachButtonEvents();
+}
+
+function exReset()
+{
+    url = host + "reset.php";
+    $("#resetView").post(url);
 }
 
 $(document).ready(exMain);

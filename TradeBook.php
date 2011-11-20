@@ -11,7 +11,18 @@
  * @author Omega
  */
 class TradeBook {
-    //put your code here
+    private $Trades;
+    
+    public function  __construct()
+    {
+        $Trades = NULL;
+    }
+    
+    public function loadTrades()
+    {
+        
+    }
+        
 }
 
 ?>

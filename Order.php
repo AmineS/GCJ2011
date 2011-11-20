@@ -34,7 +34,7 @@ class Order {
         $this->price = $price;
         $this->twilio = $twilio;
         $this->state = $state;
-        $this->parent = NULL;
+        $this->parent = 0;
     }
 
 
@@ -107,6 +107,12 @@ class Order {
     public function getHasChild(){
         return $this->has_child;
     }
+    public function getTwilio(){
+        return $this->twilio;
+    }
+    public function getState(){
+        return $this->state;
+    }
 
     /**
      *loads an order into the pending table of the database
@@ -115,17 +121,11 @@ class Order {
     public function insertPending(){
         $q="INSERT INTO order_book_pending (`from`, `bs`, `shares`, `stock`, `price`, `twilio`, `timestamp`,`state`)
 	VALUES ('$this->from', '$this->bs', '$this->shares', '$this->stock', '$this->price', '$this->twilio', NOW(), 'U');";
-
-        
         $query = mysql_query($q);
         if($query){
-            $this->id = mysql_insert_id();
             return 1;
         }
-        else
-        {
-            return 0;
-        }
+        else echo mysql_error();//return 0;
     }
 
     public function insertActive(){
@@ -177,35 +177,6 @@ class Order {
     public function isValid()
     {
         return true;
-    }
-
-    public static function generateResponse($response)
-    {
-        $brokerResponse = '<?xml version="1.0" encoding="UTF-8"?>\n <Response>\n
-            <Exchange>';
-        $brokerResponse .= $response;
-        $brokerResponse .= '</Exchange>\n </Response>\n';
-                
-        return $brokerResponse;
-    }
-
-    public static function generateRejectResponse($reason)
-    {
-        $response = '<Reject Reason="';
-        $response .= "$reason";
-        $response .= '" />';
-        echo "$response";
-
-        return Order::generateResponse($response);
-    }
-
-    public function generateAcceptResponse()
-    {
-        $response = '<Accept OrderRefId="';
-        $response .= $this->bs . ''. $this->id;
-        $response .= '" />';
-
-        return generateResponse($response);
     }
 }
 ?>
