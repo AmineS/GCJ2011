@@ -123,6 +123,7 @@ class Order {
 	VALUES ('$this->from', '$this->bs', '$this->shares', '$this->stock', '$this->price', '$this->twilio', NOW(), 'U');";
         $query = mysql_query($q);
         if($query){
+            $this->id = mysql_insert_id();
             return 1;
         }
         else echo mysql_error();//return 0;
@@ -177,6 +178,35 @@ class Order {
     public function isValid()
     {
         return true;
+    }
+    
+    public static function generateResponse($response)
+    {
+
+        $brokerResponse = '<?xml version="1.0" encoding="UTF-8"?>\n <Response>\n
+            <Exchange>';
+        $brokerResponse .= $response;
+        $brokerResponse .= '</Exchange>\n </Response>\n';
+
+        return $brokerResponse;
+    }
+
+    public static function generateRejectResponse($reason)
+    {
+        $response = '<Reject Reason="';
+        $response .= "$reason";
+        $response .= '"/>';      
+
+        return Order::generateResponse($response);
+    }
+
+    public function generateAcceptResponse()
+    {
+        $response = '<Accept OrderRefId="';
+        $response .= $this->bs . ''. $this->id;
+        $response .= '"/>';
+
+        return Order::generateResponse($response);
     }
 }
 ?>
