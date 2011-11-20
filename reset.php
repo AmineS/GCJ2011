@@ -11,11 +11,10 @@ $query .= "Truncate Table order_book_active;";
 $query .= "Truncate Table order_book_archive;";
 $query .= "Truncate Table trade_book;";
 $query .= "Truncate Table process_singleton_lock;";
-
+$query .="ALTER TABLE order_book_pending AUTO_INCREMENT = 1;";
 $result = mysqli_multi_query($link, $query);
 if($result)
 {
-    echo "went trough";
     return 1;
 }
 else
