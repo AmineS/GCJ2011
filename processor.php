@@ -17,21 +17,22 @@ function processTransactions ()
         {
             $orderBook = new OrderBook();
             $orderBook->moveToActive(true, 10);
-            $orderBook->setActiveIndex(3);          
-            $orders = $orderBook->getActiveOrdersToMatch();
-            
-            $unfilledOrders=array();
+            $orderBook->setActiveIndex(0);
+            //$orders = $orderBook->getActiveOrdersToMatch();
+
+            $unfilledOrders = $orderBook->getActiveOrdersToMatch();
+
+            //$unfilledOrders=array();
            
-            for ( $i=0; $i < $orderBook->getActiveIndex(); $i++){
-                $unfilledOrders[$i]=$orders[$i];
-                //echo $unfilledOrders[$i]->getTimestamp();
-                //echo "<br/>";
+            //for ( $i=0; $i < $orderBook->getActiveIndex(); $i++){
+                //$unfilledOrders[$i]=$orders[$i];
+                
             }
             
-            for( $j=$orderBook->getActiveIndex(); $j< count($orders); $j++){
-                $newOrderInProcess=$orders[$j];
-                  //echo  $newOrderInProcess->getTimestamp();
-                 // echo "new guy<br/>";
+            for( $j=$orderBook->getActiveIndex(); $j< count($unfilledOrders); $j++){
+                $newOrderInProcess=$unfilledOrders[$j];
+
+                  
                 
                 
                 $tradeprice=0;
@@ -67,22 +68,44 @@ function processTransactions ()
                 //$list= get records from database such that: 
                 //recods.bs="b" & recods.stock= $stock & records.price<=$neworder->price;
                     
-                    for($m=0;$m<count($unfilledOrders); $m++){
+                    for($m=0;$m<$j; $m++){                              ///////
                         if($unfilledOrders[$m]->getBS()=="S" && $unfilledOrders[$m]->getStock()==$tradeStock && 
                                 $unfilledOrders[$m]->getPrice() <= $tradeprice)
                             array_push ($matchingList, $m);
                         
                     }
                 }
-                
+
+                print_r($matchingList);
+
+                if(count($matchingList)==0){
+                                                        /////
+                    echo "<br/> BREAK ". $j . " *******";
+                     
+                     continue;
+                }
+                   
+
+                    echo "<br> Unfilled orders before while <br/>";
+                    forEach($unfilledOrders as $var){
+                       echo $var->toString()."--".$var->getId();
+                       echo "<br/>";
+                    }
                 
                 echo "<br/> Cur ORDER before loop--------------------------<br/>";
                     echo  $newOrderInProcess->toString()."--".$newOrderInProcess->getId();
                     echo "<br/>**************<br/>";
                     
                 $residualOrder = newResidual($newOrderInProcess);
+
+                //echo "<br> Unfilled orders before while <br/>";
+                  //  forEach($unfilledOrders as $var){
+                   //    echo $var->toString()."--".$var->getId();
+                  //     echo "<br/>";
                 
                 while(($match=getmatch($unfilledOrders ,$matchingList))!=-1 && $residualOrder->getShares()>0){
+
+
                     echo "<br/>**********loop****<br/>";
                     
                     echo count($unfilledOrders)."<br/>";
@@ -138,14 +161,14 @@ function processTransactions ()
                     echo  $residualOrder->toString()."--".$residualOrder->getId();
                     echo "<br/>**************<br/>";
                     
-                    array_push($unfilledOrders, $newOrderInProcess);
+                    
                      echo "ORDER done<br/>";
                     echo  $newOrderInProcess->toString()."--".$newOrderInProcess->getId();
                     echo "<br/>*******END*******<br/>";
                     
                     //addrecord($matchNumber,$tradeStock, $tradeShares, $tradeprice, $buyer,$seller, current server time);
-                   $query="INSERT INTO trade_book (`timestamp`,`buy_ref`, `sell_ref`, `price`, `amount`, `stock`)
-                           values (NOW(),'$buyer', '$seller', '$tradeprice', '$tradeShares', '$tradeStock');";
+                   $query="INSERT INTO trade_book (`timestamp`,`stock`,`buy_ref`, `sell_ref`, `price`, `amount`)
+                           values (NOW(),'$tradeStock','$buyer', '$seller', '$tradeprice', '$tradeShares' );";
                    echo "<br/>!!!!".$buyer." ".$seller." ".$tradeprice." ".$tradeShares." ".$tradeStock."!!!<br/>";
                    $response=mysql_query($query);
                    if($response){
@@ -170,7 +193,7 @@ function processTransactions ()
                        echo "<br/>";
                     }
             }
-            /*   $query2="TRUNCATE TABLE order_book_active;";
+              $query2="TRUNCATE TABLE order_book_active;";
                $response2=mysql_query($query2);
                if($response2){
                     echo "Freshness";
@@ -185,13 +208,13 @@ function processTransactions ()
                      echo "<br/>**********".$var->toString();
                     $var->insertActive();
                 }
-            }*/
+            }
             
             
     
     
         }            
-    }
+    //}
 }
 
  function newResidual($newOrderInProcess){  // TEST OK 05:11
