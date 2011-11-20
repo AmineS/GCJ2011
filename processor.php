@@ -80,21 +80,21 @@ function processTransactions ()
 
                 if(count($matchingList)==0){
                                                         /////
-                    echo "<br/> BREAK ". $j . " *******";
+                  //  echo "<br/> BREAK ". $j . " *******";
                      
                      continue;
                 }
                    
 
-                    echo "<br> Unfilled orders before while <br/>";
-                    forEach($unfilledOrders as $var){
-                       echo $var->toString()."--".$var->getId();
-                       echo "<br/>";
-                    }
+                    //echo "<br> Unfilled orders before while <br/>";
+                    //forEach($unfilledOrders as $var){
+                      // echo $var->toString()."--".$var->getId();
+                      // echo "<br/>";
+                    //}
                 
-                echo "<br/> Cur ORDER before loop--------------------------<br/>";
-                    echo  $newOrderInProcess->toString()."--".$newOrderInProcess->getId();
-                    echo "<br/>**************<br/>";
+                //echo "<br/> Cur ORDER before loop--------------------------<br/>";
+                  //  echo  $newOrderInProcess->toString()."--".$newOrderInProcess->getId();
+                    //echo "<br/>**************<br/>";
                     
                 $residualOrder = newResidual($newOrderInProcess);
 
@@ -106,28 +106,28 @@ function processTransactions ()
                 while(($match=getmatch($unfilledOrders ,$matchingList))!=-1 && $residualOrder->getShares()>0){
 
 
-                    echo "<br/>**********loop****<br/>";
+                    //echo "<br/>**********loop****<br/>";
                     
-                    echo count($unfilledOrders)."<br/>";
-                    forEach($unfilledOrders as $var){
-                       echo $var->toString()."+++++";
-                       echo "<br/>";
-                    }
+                    //echo count($unfilledOrders)."<br/>";
+                    //forEach($unfilledOrders as $var){
+                      // echo $var->toString()."+++++";
+                      // echo "<br/>";
+                    //}
                     
                     $matchResidual= newResidual($unfilledOrders[$match]);
                      
                      
-                    echo "Matching ORDER before set bs<br/>";
-                    echo  $unfilledOrders[$match]->toString()."--".$unfilledOrders[$match]->getId();
-                    echo "<br/>**************<br/>";
+                    //echo "Matching ORDER before set bs<br/>";
+                    //echo  $unfilledOrders[$match]->toString()."--".$unfilledOrders[$match]->getId();
+                    //echo "<br/>**************<br/>";
                     
                     $newOrderInProcess->setBS('f');
                     
                     $unfilledOrders[$match]->setBS('f');
                     
-                    echo "Matching ORDER<br/>";
-                    echo  $unfilledOrders[$match]->toString()."--".$unfilledOrders[$match]->getId();
-                    echo "<br/>**************<br/>";
+                    //echo "Matching ORDER<br/>";
+                    //echo  $unfilledOrders[$match]->toString()."--".$unfilledOrders[$match]->getId();
+                    //echo "<br/>**************<br/>";
                     
                     
                    
@@ -149,32 +149,32 @@ function processTransactions ()
                         
                         //add($matchResidual )to unfilled;       
                         array_push($unfilledOrders, $matchResidual);
-                        echo "Res Matching ORDER<br/>";
-                        echo  $matchResidual->toString()."--".$matchResidual->getId();
-                        echo "<br/>**************<br/>";
+                       // echo "Res Matching ORDER<br/>";
+                       // echo  $matchResidual->toString()."--".$matchResidual->getId();
+                       // echo "<br/>**************<br/>";
                         
                     }
                     
                      
                     
-                    echo "RESIDUAL ORDER<br/>";
-                    echo  $residualOrder->toString()."--".$residualOrder->getId();
-                    echo "<br/>**************<br/>";
+                 //   echo "RESIDUAL ORDER<br/>";
+                  //  echo  $residualOrder->toString()."--".$residualOrder->getId();
+                   // echo "<br/>**************<br/>";
                     
                     
-                     echo "ORDER done<br/>";
-                    echo  $newOrderInProcess->toString()."--".$newOrderInProcess->getId();
-                    echo "<br/>*******END*******<br/>";
+                     //echo "ORDER done<br/>";
+                    //echo  $newOrderInProcess->toString()."--".$newOrderInProcess->getId();
+                    //echo "<br/>*******END*******<br/>";
                     
                     //addrecord($matchNumber,$tradeStock, $tradeShares, $tradeprice, $buyer,$seller, current server time);
                    $query="INSERT INTO trade_book (`timestamp`,`stock`,`buy_ref`, `sell_ref`, `price`, `amount`)
                            values (NOW(),'$tradeStock','$buyer', '$seller', '$tradeprice', '$tradeShares' );";
-                   echo "<br/>!!!!".$buyer." ".$seller." ".$tradeprice." ".$tradeShares." ".$tradeStock."!!!<br/>";
+                   //echo "<br/>!!!!".$buyer." ".$seller." ".$tradeprice." ".$tradeShares." ".$tradeStock."!!!<br/>";
                    $response=mysql_query($query);
                    if($response){
-                        echo "went trough";
+                       // echo "went trough";
                    }else{
-                       echo "did not go through<br/>";
+                       //echo "did not go through<br/>";
                    }
                     
                     
@@ -187,25 +187,25 @@ function processTransactions ()
                   //   array_push($unfilledOrders, $residualOrder);
                  //}
                 
-                    echo "<br> Unfilled ordera after while <br/>";
-                    forEach($unfilledOrders as $var){
-                       echo $var->toString()."--".$var->getId();
-                       echo "<br/>";
-                    }
+                    //echo "<br> Unfilled ordera after while <br/>";
+                    //forEach($unfilledOrders as $var){
+                      // echo $var->toString()."--".$var->getId();
+                       //echo "<br/>";
+                    //}
             }
               $query2="TRUNCATE TABLE order_book_active;";
                $response2=mysql_query($query2);
-               if($response2){
-                    echo "Freshness";
-               }else{
-                   echo "Problem<br/>";
-               }
+               //if($response2){
+                 //   echo "Freshness";
+               //}else{
+                 //  echo "Problem<br/>";
+               //}
             foreach ($unfilledOrders as $var){
                 if($var->getBS()=='f'){
                     $var->insertArchive();
                 }
                  else {
-                     echo "<br/>**********".$var->toString();
+                 //    echo "<br/>**********".$var->toString();
                     $var->insertActive();
                 }
             }
@@ -289,3 +289,4 @@ function processorIsRunning()
     return $check[0];    
 }
 ?>
+

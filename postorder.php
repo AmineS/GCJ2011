@@ -15,7 +15,7 @@
 /*
  * need to generate an XML respons
  */
-$msgType = $_POST["MessageType"];
+/*$msgType = $_POST["MessageType"];
 if(strcmp($msgType, "O")!=0 )
 {
     $response = Order::generateRejectResponse("M");
@@ -34,7 +34,7 @@ if(strcmp($msgType, "O")!=0 )
     die($response);
 
     
-}
+}*/
 
 /*
  * Load data from http post request
@@ -63,17 +63,22 @@ else{
 $order =new Order($from, $bs, $shares, $stock, $price, $twilio, $state);
 $order->isValid();
 $result = $order->insertPending();
-
-
-
-
-    
-                    $fh = fopen("wow.txt", "a");
-        fwrite($fh, $brokerAddress);
-        fclose($fh);
+processTransactions();
+$result=1;
+//$fh = fopen("wow.txt", "a");
+//fwrite($fh, $brokerAddress."   ".$brokerEndPoint."   ".$brokerPort);
+//fclose($fh);
 if($result == 1)
-{
-    $aresponse = $order->generateAcceptResponse();
+{    $aresponse = '<?xml version=”1.0” encoding=”UTF-8”?>\n <Response>\n
+
+            <Exchange><Accept OrderRefId = "POL345" /></Exchange>\n </Response>\n';
+    ////$order->generateAcceptResponse();
+    echo $aresponse;
+    echo "<br/>";
+    echo "RESPONSE generated: ".$aresponse."<br/>";
+    $brokerAddress="127.0.0.1";
+    $brokerEndPoint="/broker";
+    $brokerEndPoint="40000127.0.0.1";
     postToBroker($brokerAddress, $brokerPort, $brokerEndPoint, $aresponse);
 }
 else
