@@ -10,10 +10,10 @@ require_once ('Order.php');
 function processTransactions ()
 {
     // if the process isn't running
-    if (true)//(processorIsRunning()==1)
+    if (processorIsRunning()==1)
     {
         //try to lock it
-        if (true)//(lockProcessor() == 1)
+        if (lockProcessor() == 1)
         {
             $orderBook = new OrderBook();
             $orderBook->moveToActive(true, 10);
@@ -209,10 +209,8 @@ function processTransactions ()
                     $var->insertActive();
                 }
             }
-            
-            
-    
-    
+            releaseProcessor();
+
         }            
     //}
 }
@@ -270,6 +268,16 @@ function lockProcessor()
     return $check[0];
 }
 
+
+function releaseProcessor()
+{
+    $query = "SELECT RELEASE_LOCK('Singleton')";
+    $result = mysql_query($query);
+
+    $check = mysql_fetch_row($result);
+
+    return $check[0];
+}
 function processorIsRunning()
 {
     
@@ -280,6 +288,4 @@ function processorIsRunning()
     
     return $check[0];    
 }
-
-processTransactions();
 ?>
