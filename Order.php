@@ -119,9 +119,13 @@ class Order {
         
         $query = mysql_query($q);
         if($query){
+            $this->id = mysql_insert_id();
             return 1;
         }
-        else echo mysql_error();//return 0;
+        else
+        {
+            return 0;
+        }
     }
 
     public function insertActive(){
@@ -173,6 +177,35 @@ class Order {
     public function isValid()
     {
         return true;
+    }
+
+    public static function generateResponse($response)
+    {
+        $brokerResponse = '<?xml version="1.0" encoding="UTF-8"?>\n <Response>\n
+            <Exchange>';
+        $brokerResponse .= $response;
+        $brokerResponse .= '</Exchange>\n </Response>\n';
+                
+        return $brokerResponse;
+    }
+
+    public static function generateRejectResponse($reason)
+    {
+        $response = '<Reject Reason="';
+        $response .= "$reason";
+        $response .= '" />';
+        echo "$response";
+
+        return Order::generateResponse($response);
+    }
+
+    public function generateAcceptResponse()
+    {
+        $response = '<Accept OrderRefId="';
+        $response .= $this->bs . ''. $this->id;
+        $response .= '" />';
+
+        return generateResponse($response);
     }
 }
 ?>

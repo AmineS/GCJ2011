@@ -2,6 +2,8 @@
 
  include_once('dbConnect.php');
  include_once ('Order.php');
+ include_once('OrderBook.php');
+ include_once('post.php');
 
 /* 
  * if message is not identified as an error, kill the 
@@ -15,7 +17,22 @@
 $msgType = $_POST["MessageType"];
 if(strcmp($msgType, "O")!=0 )
 {
-    die('Message did not identify as an order!');
+    $response = Order::generateRejectResponse("M");
+    $r = new HttpRequest('http://localhost:40000/broker/endpoint', HttpRequest::METH_POST);
+    $r->addPostFields(array('xml' => $response));
+    $r->setContentType("Content-Type: text/xml");
+
+    try {
+         echo "<br/>";
+        echo $r->send()->getBody();
+           
+    } catch (HttpException $ex) {
+
+        echo $ex;
+    }
+    die($response);
+
+    
 }
 
 /*
@@ -28,6 +45,9 @@ $stock = $_POST["Stock"];
 $price= $_POST["Price"];
 $twilio= $_POST["Twilio"];
 $state = 'U';
+$brokerAddress =$_POST["BrokerAddress"];
+$brokerPort = $_POST["BrokerPort"];
+$brokerEndPoint =$_POST["BrokerEndpoint"];
 
 if($twilio=='N'){
     $twilio=0;
@@ -41,19 +61,15 @@ else{
 
 $order =new Order($from, $bs, $shares, $stock, $price, $twilio, $state);
 $order->isValid();
-$order->insertPending();
+$insertion = $order->insertPending();
+if($insertion == 1)
+{
+    postToBroker($brokerAddress, $brokerPort, $brokerEndPoint, $order->generateAcceptResponse());
+}
+else
+{
 
+    Order::generateRejectResponse('invalid dataset');
+}
 
-//$q="INSERT INTO order_book_pending (`from`, `bs`, `shares`, `stock`, `price`, `twilio`, `timestamp`,`state`)
-//	VALUES ('$from', '$bs', '$shares', '$stock', '$price', '$twilio', CURRENT_TIMESTAMP, 'U');";
-
-//$fh = fopen("wtf.txt","w+");
-//fwrite($fh, $q1);
-//fclose($fh);
-
-//$query = mysql_query($q);
-//include('processor.php');
-//processTransactions();
-
-//mysql_close();
 ?>

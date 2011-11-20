@@ -1,6 +1,6 @@
 <?php
-include_once 'dbConnect.php';
-include_once 'Order.php';
+//include_once 'dbConnect.php';
+//include_once 'Order.php';
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -170,7 +170,7 @@ class OrderBook
         return $this->activeId;
     }
 }
-echo "bla";
-$orderBook = new OrderBook();
-$orderBook->moveToActive(true, 10);
+//echo "bla";
+//$orderBook = new OrderBook();
+//$orderBook->moveToActive(true, 10);
 ?>
